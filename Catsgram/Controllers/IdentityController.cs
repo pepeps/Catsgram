@@ -14,7 +14,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Catsgram.Controllers
-{ 
+{
     public class IdentityController : ApiController
     {
         private readonly UserManager<User> userManager;
@@ -62,16 +62,16 @@ namespace Catsgram.Controllers
             var key = Encoding.ASCII.GetBytes(this.options.Secret);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(new Claim[] { new Claim(ClaimTypes.Name, user.Id.ToString()) }),
+                Subject = new ClaimsIdentity(new[] { new Claim(ClaimTypes.NameIdentifier, user.Id), new Claim(ClaimTypes.Name, user.UserName) }),
                 Expires = DateTime.UtcNow.AddDays(7),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
-            var encryptedToken =  tokenHandler.WriteToken(token);
+            var encryptedToken = tokenHandler.WriteToken(token);
 
             return new
-            { 
-                Token = encryptedToken 
+            {
+                Token = encryptedToken
             };
 
 
