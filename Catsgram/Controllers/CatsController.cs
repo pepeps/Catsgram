@@ -11,5 +11,12 @@ namespace Catsgram.Controllers
 {
     public class CatsController : ApiController
     {
+
+        [Authorize]
+        [HttpPost]
+        public async Task<ActionResult<int>> Create(CreateCatRequest createCatRequest)
+        {
+
+        }
     }
 }
