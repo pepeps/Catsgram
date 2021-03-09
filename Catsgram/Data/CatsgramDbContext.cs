@@ -1,4 +1,5 @@
-﻿using Catsgram.Models;
+﻿using Catsgram.Data.Models;
+using Catsgram.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;

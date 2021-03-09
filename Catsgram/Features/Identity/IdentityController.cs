@@ -1,6 +1,6 @@
-﻿using Catsgram.Helpers;
+﻿using Catsgram.Features;
+using Catsgram.Helpers;
 using Catsgram.Models;
-using Catsgram.Models.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -13,19 +13,22 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Catsgram.Controllers
+namespace Catsgram.Features.Identity
 {
     public class IdentityController : ApiController
     {
         private readonly UserManager<User> userManager;
+        private readonly IIdentityService identityService;
         private readonly AppSettings options;
 
-        public IdentityController(UserManager<User> userManager, IOptions<AppSettings> options)
+        public IdentityController(UserManager<User> userManager, IOptions<AppSettings> options, IIdentityService identityService)
         {
             this.userManager = userManager;
+            this.identityService = identityService;
             this.options = options.Value;
         }
 
+        [HttpPost]
         [Route(nameof(Register))]
         public async Task<IActionResult> Register(RegisterUserRequestModel model)
         {
@@ -44,8 +47,9 @@ namespace Catsgram.Controllers
             return BadRequest(result.Errors);
         }
 
+        [HttpPost]
         [Route(nameof(Login))]
-        public async Task<ActionResult<object>> Login(LoginRequestModel loginRequestModel)
+        public async Task<ActionResult<LoginResponseModel>> Login(LoginRequestModel loginRequestModel)
         {
             var user = await this.userManager.FindByNameAsync(loginRequestModel.Username);
             if (user == null)
@@ -58,18 +62,11 @@ namespace Catsgram.Controllers
             {
                 return Unauthorized();
             }
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(this.options.Secret);
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(new[] { new Claim(ClaimTypes.NameIdentifier, user.Id), new Claim(ClaimTypes.Name, user.UserName) }),
-                Expires = DateTime.UtcNow.AddDays(7),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-            };
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            var encryptedToken = tokenHandler.WriteToken(token);
 
-            return new
+
+            var encryptedToken = this.identityService.GenerateJwtToken(user.Id, user.UserName, this.options.Secret);
+
+            return  new LoginResponseModel
             {
                 Token = encryptedToken
             };

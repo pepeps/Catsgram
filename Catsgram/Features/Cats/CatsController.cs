@@ -1,7 +1,6 @@
 ﻿using Catsgram.Data;
 using Catsgram.Infrastructure;
 using Catsgram.Models;
-using Catsgram.Models.Cats;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -10,33 +9,31 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
-namespace Catsgram.Controllers
+namespace Catsgram.Features.Cats
 {
     public class CatsController : ApiController
     {
-        private readonly CatsgramDbContext context;
+        private readonly ICatService service;
 
-        public CatsController(CatsgramDbContext context)
+        public CatsController(ICatService service)
         {
-            this.context = context;
+            this.service = service;
         }
+
+        //[Authorize]
+        //[HttpGet] 
+        //public async Task<IActionResult> Mine()
+        //{
+
+        //}
 
         [Authorize]
         [HttpPost]
         public async Task<ActionResult<int>> Create(CreateCatRequest createCatRequest)
         {
             var userId = this.User.GetId();
-            var cat = new Cat
-            {
-                Description = createCatRequest.Description,
-                ImageUrl = createCatRequest.ImageUrl,
-                UserId = userId
-            };
-
-            this.context.Add(cat);
-            await this.context.SaveChangesAsync();
-
-            return Created(nameof(this.Create), cat.Id);
+            var id =  await this.service.Create(createCatRequest.ImageUrl, createCatRequest.Description, userId);
+            return Created(nameof(this.Create), id);
         }
     }
 }

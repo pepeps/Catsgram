@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Catsgram.Models.Identity
+namespace Catsgram.Features.Identity
 {
     public class LoginRequestModel
     {

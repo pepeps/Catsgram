@@ -30,44 +30,14 @@ namespace Catsgram
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
             services.AddDbContext<CatsgramDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-            services.AddIdentity<User, IdentityRole>(options =>
-            {
-
-                options.Password.RequiredLength = 6;
-                options.Password.RequireDigit = false;
-                options.Password.RequireLowercase = false;
-                options.Password.RequireUppercase = false;
-                options.Password.RequireNonAlphanumeric = false;
-
-            })
-              .AddEntityFrameworkStores<CatsgramDbContext>();
-            var applicationSettingsConfiguration = this.Configuration.GetSection("AppSettings");
-            services.Configure<AppSettings>(applicationSettingsConfiguration);
-
-            var appSettings = applicationSettingsConfiguration.Get<AppSettings>();
-            var key = Encoding.ASCII.GetBytes(appSettings.Secret);
-
-            services.AddAuthentication(x =>
-            {
-                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-              .AddJwtBearer(x =>
-              {
-                  x.RequireHttpsMetadata = false;
-                  x.SaveToken = true;
-                  x.TokenValidationParameters = new TokenValidationParameters
-                  {
-                      ValidateIssuerSigningKey = true,
-                      IssuerSigningKey = new SymmetricSecurityKey(key),
-                      ValidateIssuer = false,
-                      ValidateAudience = false
-                  };
-              });
-
-            services.AddControllers();
+                options.UseSqlServer(this.Configuration.GetDefaultConnectionString()))
+                .AddIdentity()
+                .AddJwtAuthentication(services.GetAppSettings(this.Configuration))
+                .AddApplicationServices()
+                .AddSwagger()
+                .AddControllers();
 
         }
 
@@ -79,6 +49,7 @@ namespace Catsgram
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseSwaggerUI();
             app.UseRouting();
             app.UseCors(x => x
                .AllowAnyOrigin()
