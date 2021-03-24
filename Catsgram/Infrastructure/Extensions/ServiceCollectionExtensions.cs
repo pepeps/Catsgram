@@ -2,6 +2,8 @@
 using Catsgram.Features.Cats;
 using Catsgram.Features.Identity;
 using Catsgram.Helpers;
+using Catsgram.Infrastructure.Filters;
+using Catsgram.Infrastructure.Service;
 using Catsgram.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -15,7 +17,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Catsgram.Infrastructure
+namespace Catsgram.Infrastructure.Extensions
 {
     public static class ServiceCollectionExtensions
     {
@@ -64,6 +66,7 @@ namespace Catsgram.Infrastructure
         public static IServiceCollection AddApplicationServices(this IServiceCollection services)
             => services
                 .AddTransient<IIdentityService, IdentityService>()
+                .AddScoped<ICurrentUserService, CurrentUserService>()
                 .AddTransient<ICatService, CatService>();
 
         public static IServiceCollection AddSwagger(this IServiceCollection services)
@@ -92,5 +95,9 @@ namespace Catsgram.Infrastructure
 
             return services;
         }
+
+        public static void AddApiControllers(this IServiceCollection services)
+               => services.AddControllers(options => options.Filters.Add<ModelOrNotFoundActionFilter>());
+
     }
 }

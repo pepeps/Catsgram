@@ -4,14 +4,16 @@ using Catsgram.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Catsgram.Migrations
 {
     [DbContext(typeof(CatsgramDbContext))]
-    partial class CatsgramDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210323214318_AuditInfoRequiredCreatedNotBy2")]
+    partial class AuditInfoRequiredCreatedNotBy2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

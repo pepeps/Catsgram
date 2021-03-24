@@ -1,23 +1,11 @@
 using Catsgram.Data;
-using Catsgram.Helpers;
-using Catsgram.Infrastructure;
-using Catsgram.Models;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Catsgram.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Catsgram
 {
     public class Startup
@@ -37,7 +25,7 @@ namespace Catsgram
                 .AddJwtAuthentication(services.GetAppSettings(this.Configuration))
                 .AddApplicationServices()
                 .AddSwagger()
-                .AddControllers();
+                .AddApiControllers();
 
         }
 

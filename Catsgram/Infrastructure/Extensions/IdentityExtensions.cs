@@ -4,7 +4,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
-namespace Catsgram.Infrastructure
+namespace Catsgram.Infrastructure.Extensions
 {
     public static class IdentityExtensions
     {
